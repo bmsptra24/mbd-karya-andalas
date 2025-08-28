@@ -1,27 +1,21 @@
 import { updateData } from './Database'
 import axios from 'axios'
 
-// get data from api
-export const getDataFromChatGPT = async (input) => {
-  const params = new URLSearchParams({
-    data: JSON.stringify(input),
-  }).toString()
-  const link = `${import.meta.env.VITE_APP_API_LINK}/get-answer?${params}`
-  const data = await axios
-    .post(link)
-    .then((data) => data.data)
-    .catch((error) => error.response.data.body)
+export const getDataFromGemini = async (input) => {
+  const link = `${import.meta.env.VITE_APP_API_LINK}get-answer`;
 
-  // const data = await axios
-  //   .put(link, input)
-  //   .then((data) => data.data)
-  //   .catch((error) => error.response.data.body);
-
-  // const url = `http://localhost:3000/tes?${params}`;
-
-  // console.log(data);
-  return data
-}
+  try {
+    const response = await axios.post(link, input, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data from Gemini:", error.response?.data || error.message);
+    return error.response?.data?.body || { role: 'assistant', content: 'Error...' };
+  }
+};
 
 // get answer from api
 export const getAnswer = async (path, log, input, setState, defaultSystem) => {
@@ -36,7 +30,7 @@ export const getAnswer = async (path, log, input, setState, defaultSystem) => {
     ]
     await updateData(path, templateUser)
 
-    const data = await getDataFromChatGPT(templateUser)
+    const data = await getDataFromGemini(templateUser)
     if (data) {
       updateData(path, [...templateUser, data])
     } else {
