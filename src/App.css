@@ -1,0 +1,116 @@
+/* https://colorhunt.co/palette/f9f7f7dbe2ef3f72af112d4e */
+
+:root {
+  --white-light: #f9f7f7;
+  --white-dark: #dbe2ef;
+  --blue-light: #b1d4ff;
+  --blue-light-2: #7fb5ff;
+  --blue-light-2-sw: #9ec6ff;
+  --blue-shadow: #c4ddff;
+  --blue: #5393e1;
+  --blue-dark: #112d4e;
+  --clr-footer: #001d6e;
+  --clr-bg: #e1eeff;
+  --poppin: "Poppins", sans-serif;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.blue-shadow {
+  background-color: var(--blue-shadow);
+}
+
+.App {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--poppin);
+}
+
+.mt-n1 {
+  margin-top: -0.25rem !important;
+}
+.mt-n2 {
+  margin-top: -0.5rem !important;
+}
+.mt-n3 {
+  margin-top: -0.75rem !important;
+}
+.mt-n4 {
+  margin-top: -1rem !important;
+}
+.bg-loading {
+  background-color: var(--clr-bg);
+}
+::-webkit-scrollbar {
+  background-color: #cbd5e1;
+  border-radius: 5px;
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #94a3b8;
+  border-radius: 5px;
+}
+
+.toasts {
+  color: #fff;
+  position: fixed;
+  top: 20px;
+  right: 15px;
+  z-index: 1001;
+  animation-name: fadeInRight, hide;
+  animation-duration: 1s;
+  animation-delay: 0s, 5s;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes hide {
+  100% {
+    opacity: 0;
+  }
+}
+
+/* https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/ */
+.grow-wrap {
+  display: grid;
+}
+.grow-wrap::after {
+  /* Note the weird space! Needed to preventy jumpy behavior */
+  content: attr(data-replicated-value) " ";
+
+  /* This is how textarea text behaves */
+  white-space: pre-wrap;
+
+  /* Hidden from view, clicks, and screen readers */
+  visibility: hidden;
+}
+.grow-wrap > textarea {
+  /* You could leave this, but after a user resizes, then it ruins the auto sizing */
+  resize: none;
+
+  /* Firefox shows scrollbar on growth, you can hide like this. */
+  overflow: hidden;
+}
+.grow-wrap > textarea,
+.grow-wrap::after {
+  /* Identical styling required!! */
+  border: 1px solid black;
+  padding: 0.5rem;
+  font: inherit;
+
+  /* Place on top of each other */
+  grid-area: 1 / 1 / 2 / 2;
+}

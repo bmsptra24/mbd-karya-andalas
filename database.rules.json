@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "users": {
+      "$uid": { 
+        // check is user already login?
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid",
+        // validate data from user (email, username,tasks)
+        ".validate": "newData.hasChildren(['email']) || newData.hasChildren(['username']) || newData.hasChildren(['tasks']) || newData.hasChildren(['feynman']) || newData.hasChildren(['notes']) || newData.hasChildren(['moduls']) || newData.hasChildren(['search'])",
+      },
+      ".write": "auth.uid !== null",
+    }
+  }
+}

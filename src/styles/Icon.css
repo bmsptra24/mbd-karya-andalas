@@ -1,0 +1,15 @@
+.icon {
+  width: 47px;
+  height: 47px;
+  min-width: 47px;
+  min-height: 47px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 9999px;
+  margin: 5px;
+  cursor: pointer;
+}
+img {
+  width: 30px;
+}
