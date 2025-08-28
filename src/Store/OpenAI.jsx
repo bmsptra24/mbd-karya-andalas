@@ -8,7 +8,7 @@ export const getDataFromChatGPT = async (input) => {
   }).toString()
   const link = `${import.meta.env.VITE_APP_API_LINK}/get-answer?${params}`
   const data = await axios
-    .get(link)
+    .post(link)
     .then((data) => data.data)
     .catch((error) => error.response.data.body)
 
