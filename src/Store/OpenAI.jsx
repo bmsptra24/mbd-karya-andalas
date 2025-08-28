@@ -6,7 +6,7 @@ export const getDataFromChatGPT = async (input) => {
   const params = new URLSearchParams({
     data: JSON.stringify(input),
   }).toString()
-  const link = `${import.meta.env.VITE_APP_API_LINK}/gpt/get-answer?${params}`
+  const link = `${import.meta.env.VITE_APP_API_LINK}/get-answer?${params}`
   const data = await axios
     .get(link)
     .then((data) => data.data)
