@@ -13,7 +13,6 @@ import { useSelector } from 'react-redux'
 import { ImSpinner2 } from 'react-icons/im'
 import { LimitData } from '../../Configuration'
 
-// add new note
 const addCardModule = async (user, setCards, key = newKey('flashcard')) => {
   const template = {
     question: '',
@@ -30,7 +29,31 @@ const addCardModule = async (user, setCards, key = newKey('flashcard')) => {
   )
 }
 
-const Note = () => {
+// Function untuk menambah card baru (di dalam modul yang sedang terbuka)
+const addCardToCurrentModule = async (user, flashcardKey, setCards) => {
+  const template = {
+    question: '',
+    answer: '',
+  }
+  const keyCard = await newKey('card')
+
+  setCards((e) => {
+    return [...e, [keyCard, template]]
+  })
+  await updateData(
+    [
+      'users/' +
+        user.uid +
+        '/flashcard/' +
+        flashcardKey +
+        '/cards/' +
+        keyCard,
+    ],
+    template,
+  )
+}
+
+const Flashcard = () => {
   const [user] = useAuthState(auth)
   const [data, setData] = useState([]) // all data flashcard
   const [title, setTitle] = useState('') // a note was selected
@@ -56,9 +79,7 @@ const Note = () => {
     setIsEdit(true)
   }
 
-  // remove a module card
   const handleDelete = () => {
-    // jika menghapus elemen terakhir dan data > 1
     if (data.length - 2 === lastOpen) {
       updateData(
         ['users/' + user.uid + '/flashcard/' + 'lastOpen'],
@@ -74,15 +95,14 @@ const Note = () => {
   const handleCreateNewModule = async () => {
     if (data.length < LimitData.flashcard.module) {
       setIsListClicked(false)
-      addCardModule(user, setCards)
+      const newFlashcardKey = newKey('flashcard')
+      await addCardModule(user, setCards, newFlashcardKey)
       if (lastOpen >= 0) {
-        // jika data masih ada maka:
         await updateData(
           ['users/' + user.uid + '/flashcard/' + 'lastOpen'],
           data.length - 1,
         )
       } else {
-        // jika tidak ada data:
         await updateData(['users/' + user.uid + '/flashcard/' + 'lastOpen'], 0)
       }
       setIsEdit(true)
@@ -92,7 +112,6 @@ const Note = () => {
     }
   }
 
-  // get data from database
   useEffect(() => {
     if (user) {
       fetchDataRealtime(`users/${user.uid}/flashcard`, (snapshot) => {
@@ -101,7 +120,6 @@ const Note = () => {
     }
   }, [user])
 
-  // change state
   const changeState = {
     title: (event) => {
       handleUpdate('title', event.target.value)
@@ -115,7 +133,7 @@ const Note = () => {
   }
 
   const handleUpdate = (key, value) => {
-    if (lastOpen !== undefined) {
+    if (lastOpen !== undefined && data[lastOpen]) {
       setTitle(value)
       updateData(
         ['users/' + user.uid + '/flashcard/' + data[lastOpen][0] + '/' + key],
@@ -125,7 +143,7 @@ const Note = () => {
   }
 
   const handleCardUpdate = (dbCardKey, cardProperty, value) => {
-    if (lastOpen !== undefined) {
+    if (lastOpen !== undefined && data[lastOpen]) {
       setCards((prev) => {
         return prev.map((e) => {
           if (e[0] === dbCardKey) {
@@ -163,13 +181,11 @@ const Note = () => {
       flashcardId: data[lastOpen][0],
       date: new Date(),
       title: data[lastOpen][1]?.title,
-      cardsLenght: Object.keys(data[lastOpen][1]?.cards).length,
+      cardsLenght: Object.keys(data[lastOpen][1]?.cards || {}).length,
     }
-    // console.log({ value })
     updateData([path + key], value)
   }
 
-  // set last open data for navigate in first modul
   useEffect(() => {
     if (data.length > 1) {
       setLastOpen(data[data.length - 1][1])
@@ -178,7 +194,6 @@ const Note = () => {
     }
   }, [data])
 
-  // set the note
   useEffect(() => {
     if (lastOpen >= 0 && data.length !== 0) {
       data[lastOpen][1].title !== undefined
@@ -191,7 +206,7 @@ const Note = () => {
       }
       setCurrentKeyCard(data[lastOpen][0])
     }
-  }, [lastOpen])
+  }, [lastOpen, data])
 
   const handleClickRefTitle = () => {
     refTitle.current.focus()
@@ -205,9 +220,14 @@ const Note = () => {
       setCheckPoint((e) => e + 1)
     }
 
-    // when in last question
     if (checkPoint >= cards.length - 1) {
       setIsEnd(true)
+    }
+  }
+
+  const handleAddNewCard = () => {
+    if (data[lastOpen] && data[lastOpen][0]) {
+        addCardToCurrentModule(user, data[lastOpen][0], setCards)
     }
   }
 
@@ -242,9 +262,8 @@ const Note = () => {
                   }
                 >
                   <div className="hover:overflow-y-scroll overflow-hidden mr-3 lg:mr-0 grow h-9/10 lg:h-auto mb-0 lg:mb-1">
-                    {lastOpen >= 0
+                    {lastOpen >= 0 && data.length > 1
                       ? data.map((e, idx) => {
-                          // console.log(data.length)
                           if (idx !== data.length - 1) {
                             return (
                               <div
@@ -262,7 +281,6 @@ const Note = () => {
                                   setIsListClicked((e) => !e)
                                   data.map((e, index) => {
                                     if (idx === index && idx !== data.length) {
-                                      // update last open
                                       updateData(
                                         [
                                           'users/' +
@@ -286,7 +304,7 @@ const Note = () => {
                             )
                           }
                         })
-                      : data.length === 0
+                      : data.length === 1
                       ? 'loading'
                       : 'Tidak ada modul...'}
                   </div>
@@ -348,7 +366,7 @@ const Note = () => {
                               cards.map((e, idx) => {
                                 return (
                                   <div
-                                    key={idx}
+                                    key={e[0]}
                                     className="flex justify-between w-100 mt-2"
                                   >
                                     <div className="me-2 pt-2 flex">
@@ -376,29 +394,34 @@ const Note = () => {
                                       }}
                                       value={e[1].answer}
                                     ></textarea>
-                                    <BsTrash
-                                      className="mt-1 ml-2 hover:text-red-700 cursor-pointer transition ease-out"
-                                      onClick={() => {
-                                        cards.map((e, idxCard) => {
-                                          if (idxCard === idx) {
+                                    <div className='flex flex-col items-center ml-2'>
+                                        <BsTrash
+                                        className="mt-1 hover:text-red-700 cursor-pointer transition ease-out"
+                                        onClick={() => {
                                             updateData(
-                                              'users/' +
+                                                'users/' +
                                                 user.uid +
                                                 '/flashcard/' +
                                                 data[lastOpen][0] +
                                                 '/cards/' +
                                                 e[0],
-                                              null,
+                                                null,
                                             )
-                                            setCards((e) =>
-                                              e.filter(
-                                                (_, idx) => idx !== idxCard,
-                                              ),
+                                            setCards((prevCards) =>
+                                                prevCards.filter(
+                                                    (card) => card[0] !== e[0]
+                                                ),
                                             )
-                                          }
-                                        })
-                                      }}
-                                    />
+                                        }}
+                                        />
+                                        {/* add plus button here to add new card */}
+                                        {idx === cards.length - 1 && (
+                                            <BsPlusLg
+                                                className="mt-2 hover:text-green-700 cursor-pointer transition ease-out"
+                                                onClick={handleAddNewCard}
+                                            />
+                                        )}
+                                    </div>
                                   </div>
                                 )
                               })}
@@ -479,21 +502,6 @@ const Note = () => {
                         onClick={() => {
                           setCheckPoint(0)
                           setIsStart(true)
-
-                          // generate random number
-                          // const randomnumbertemp = await shuffleArray(
-                          //   generateNumberArray(cards.length)
-                          // );
-                          // await setRandomNumbers(randomnumbertemp);
-                          // setRandomNumber(
-                          //   randomNumbers && randomNumbers[checkPoint] - 1
-                          // );
-                          // console.log(randomNumber);
-                          // console.log(cards[randomNumbers[0]-1][1].question);
-                          // setRandomNumbers(
-                          //   shuffleArray(generateNumberArray(cards.length))
-                          // );
-                          // console.log({ randomNumbers });
                         }}
                       >
                         <p className="font-bold text-3xl">START</p>
@@ -536,7 +544,6 @@ const Note = () => {
                               <button
                                 className={`transition ease-in-out bg-red-300 py-2 rounded-lg px-3 hover:bg-red-400 cursor-pointer`}
                                 onClick={() => {
-                                  // next question
                                   handleNextQuestion()
                                 }}
                               >
@@ -549,7 +556,6 @@ const Note = () => {
 
                                   setScore(updatedScore)
 
-                                  // next question
                                   handleNextQuestion()
                                 }}
                               >
@@ -594,4 +600,4 @@ const Note = () => {
   )
 }
 
-export default Note
+export default Flashcard

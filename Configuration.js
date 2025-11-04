@@ -79,31 +79,31 @@ export const Wallpaper = [
 
 export const LimitData = {
   todolist: {
-    module: 30,
+    module: 100,
     title: 44,
     body: 200,
   },
   notes: {
-    module: 25,
+    module: 100,
     title: 44,
     body: 6000,
   },
   blurting: {
-    module: 25,
+    module: 100,
     title: 44,
     body: 6000,
   },
   flashcard: {
-    module: 25,
+    module: 100,
     title: 44,
     body: 800,
   },
   feynman: {
-    module: 25,
+    module: 100,
     body: 500,
   },
   search: {
-    module: 20,
+    module: 100,
     body: 500,
   },
 }
