@@ -94,6 +94,8 @@ const Flashcard = () => {
 
   const handleCreateNewModule = async () => {
     if (data.length < LimitData.flashcard.module) {
+      console.log(data.length < LimitData.flashcard.module);
+      
       setIsListClicked(false)
       const newFlashcardKey = newKey('flashcard')
       await addCardModule(user, setCards, newFlashcardKey)

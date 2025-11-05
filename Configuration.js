@@ -135,7 +135,7 @@ export const Configuration = {
   ],
   templateNewUser: {
     music: { log: 'rainSound' },
-    flashcard: { lastopen: -1 },
+    flashcard: { lastOpen: -1 },
     pomodoro: {
       pomodoroDuration: 25,
       shortBreak: 5,

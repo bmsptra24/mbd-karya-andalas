@@ -33,7 +33,7 @@ const Help = () => {
         <button
           className="text-slate-100 absolute bottom-10 py-3 px-6 bg-gradient-to-l bg-blue-500 rounded-lg border-blue-400 border-4 text-3xl transition-all hover:bg-blue-600 hover:border-blue-400 hover:shadow-lg ease-in-out animate-pulse hover:animate-none"
           onClick={() => {
-            navigate("/home");
+            navigate("/");
           }}
         >
           Continue
