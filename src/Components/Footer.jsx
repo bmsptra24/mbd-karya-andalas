@@ -76,7 +76,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="z-40 hidden lg:flex lg:absolute lg:left-0 sidebar-container bg-slate-50 ring-2 ring-slate-800 flex flex-col justify-start items-center h-screen w-16 lg:rounded-tr-3xl lg:rounded-br-3xl">
+    <div className="z-40 lg:flex absolute lg:left-0 sidebar-container bg-slate-50 ring-2 ring-slate-800 flex flex-row justify-start items-center w-screen lg:h-screen lg:w-16 lg:rounded-tr-3xl lg:rounded-br-3xl bottom-0">
       {/* large screen */}
       <div className="w-full h-full justify-start items-center hidden lg:flex flex-col py-4">
         <div
@@ -198,8 +198,8 @@ const Sidebar = () => {
       </div>
 
       {/* small screen */}
-      <div className="relative h-14 w-full justify-center items-center flex lg:hidden flex-col">
-        <div className="icon relative">
+      <div className="relative h-14 w-full justify-between items-center flex lg:hidden flex-row">
+        {/* <div className="icon relative">
           <div
             className={
               isBurgerClicked === true
@@ -304,8 +304,8 @@ const Sidebar = () => {
               dispatch(setMusic(false))
             }}
           />
-        </div>
-        <div className="icon absolute bottom-5">
+        </div> */}
+        <div className="icon lg:absolute bottom-5">
           <div
             className="select-none"
             onClick={() => {
@@ -319,7 +319,7 @@ const Sidebar = () => {
           </div>
         </div>
         <div
-          className="absolute top-5 pomodoro"
+          className="lg:absolute top-5 pomodoro"
           onClick={() => {
             dispatch(setMusic(false))
             dispatch(setPomodoro(!pomodoro))

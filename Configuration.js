@@ -132,6 +132,7 @@ export const Configuration = {
     { title: 'Feynman', icon: FaChalkboardTeacher },
     { title: 'Search', icon: BsSearch },
     { title: 'Rank', icon: RiMedalLine },
+    { title: 'Pomodoro', icon: RiMedalLine },
   ],
   templateNewUser: {
     music: { log: 'rainSound' },
